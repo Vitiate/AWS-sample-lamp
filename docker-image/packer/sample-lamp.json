@@ -3,6 +3,9 @@
     "ssmdbendpoint": "ssm Location of dbendpoint",
     "ssmdbusername": "ssm Location of dbusername",
     "ssmdbpassword": "ssm Location of dbpassword",
+    "docker-repo": "",
+    "ecr_login": "true",
+
     "hostname": "www.sample.com",
     "build_version": "0",
     "playbook_dir": "../ansible-local"
@@ -38,5 +41,19 @@
       "playbook_file": "{{user `playbook_dir`}}/sample-lamp.yaml",
       "playbook_paths": "{{user `playbook_dir`}}"
     }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "{{user `docker-repo`}}",
+        "tag": "{{user `build_version`}}"
+      },
+      {
+        "type": "docker-push",
+        "ecr_login": "{{user `ecr-login`}}",
+        "login_server": "{{user `docker-repo`}}"
+      }
+    ]
   ]
 }
