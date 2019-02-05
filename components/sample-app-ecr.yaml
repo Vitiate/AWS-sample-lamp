@@ -38,4 +38,12 @@ Resources:
               - ecr:GetDownloadUrlForLayer
               - ecr:BatchGetImage
               - ecr:BatchCheckLayerAvailability
-
+  
+  ApplicationECR:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name:
+        "Fn::Sub":
+          "/cloudformation/${ProjectName}/${EnvironmentName}/${ComponentName}/ECR/arn"
+      Type: "String"
+      Value: !Join [ "", ${AWS::AccountId}, ".dkr.ecr.${AWS::Region}.amazonaws.com/$PROJECT/$ENV/" ] ]
