@@ -27,9 +27,9 @@ stage_deploy_dev:
     - export PROFILE=dev
   script:
 #    - COMPONENT=moodle34-security-groups make update-stack
-#    - COMPONENT=moodle34-rds make update-stack
+    - COMPONENT=sample-app-ecr make update-stack
 #    # Yeah this looks bad, but it is better then it would be otherwise.
-#    - if [ ! -d "$HOME/packer" ]; then mkdir ~/packer; pushd ~/packer; wget https://releases.hashicorp.com/packer/1.3.4/packer_1.3.4_linux_amd64.zip; unzip ./packer_1.3.4_linux_amd64.zip; popd; fi 
+    #- if [ ! -d "$HOME/packer" ]; then mkdir ~/packer; pushd ~/packer; wget https://releases.hashicorp.com/packer/1.3.4/packer_1.3.4_linux_amd64.zip; unzip ./packer_1.3.4_linux_amd64.zip; popd; fi 
 #    - ~/packer/packer build -var 'repo=testing' -var 'playbook_dir=ami/ansible-local' ami/packer/aumoodle-template.json
   only:
     - development
