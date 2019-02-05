@@ -16,7 +16,7 @@
   },
   {
     "ParameterKey": "AppName",
-    "ParameterValue": "demo_docker_app",
+    "ParameterValue": "sample-app",
     "UsePreviousValue": false
   }
 ]

@@ -7,14 +7,12 @@ else
 	STACK_NAME = $(COMPONENT)-$(ENV)
 endif
 
-ifndef PROFILE
-	ifndef AWS_ACCESS_KEY_ID
+ifndef AWS_ACCESS_KEY_ID
+	ifndef PROFILE
 		$(error PROFILE is undefined; the profile is used to connect to the correct AWS Account, sample configuration can be seen in .README.md )
 	else
-		PROFILEX = ""
+		PROFILEX = --profile $(PROFILE)
 	endif
-else
-	PROFILE = $(PROFILEX)
 endif
 
 
@@ -33,14 +31,14 @@ endif
 
 update-stack: _check-params _check-component _is_user_authenticated
 	chmod +x ./make_scripts/update_stack.sh
-	export STACK_NAME=$(STACK_NAME) && export PROFILE=$(PROFILE) && ./make_scripts/update_stack.sh
+	export STACK_NAME=$(STACK_NAME) export PROFILE="$(PROFILEX)" && ./make_scripts/update_stack.sh
 
 delete-stack: _check-params _is_user_authenticated
 	aws cloudformation delete-stack \
-	  --profile $(PROFILE) \
+	  $(PROFILEX) \
 	  --stack-name $(STACK_NAME)
 
 describe-stack: _check-params _is_user_authenticated
 	aws cloudformation describe-stacks \
-	  --profile $(PROFILE) \
+	  $(PROFILEX) \
 	  --stack-name $(STACK_NAME)
