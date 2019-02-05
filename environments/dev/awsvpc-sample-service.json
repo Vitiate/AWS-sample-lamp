@@ -1,0 +1,72 @@
+[
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "applications",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue": "dev",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "ComponentName",
+    "ParameterValue": "awsvpc-sample-service",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupVpcId",
+    "ParameterValue": "/cloudformation/applications/dev/networking/vpc/id",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupClusterName",
+    "ParameterValue": "/cloudformation/applications/dev/ecs-cluster/cluster/name",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupLoadBalancerListenerArn",
+    "ParameterValue": "/cloudformation/applications/dev/load-balancer/http-listener/arn",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupApplicationAutoScalingRoleArn",
+    "ParameterValue": "/cloudformation/applications/dev/ecs-cluster/application-autoscaling-role/arn",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupSubnetIds",
+    "ParameterValue": "/cloudformation/applications/dev/networking/public-subnets/ids",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupAwsvpcSampleServiceSecurityGroup",
+    "ParameterValue": "/cloudformation/applications/dev/security-groups/awsvpc-sample-sg/id",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "TaskName",
+    "ParameterValue": "sample",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "Path",
+    "ParameterValue": "/awsvpc",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "HealthCheckPath",
+    "ParameterValue": "/awsvpc",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "DesiredCount",
+    "ParameterValue": "2",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "ContainerPort",
+    "ParameterValue": "5000",
+    "UsePreviousValue": false
+  }
+]

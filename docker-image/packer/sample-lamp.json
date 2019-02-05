@@ -1,0 +1,42 @@
+{
+  "variables": {
+    "ssmdbendpoint": "ssm Location of dbendpoint",
+    "ssmdbusername": "ssm Location of dbusername",
+    "ssmdbpassword": "ssm Location of dbpassword",
+    "hostname": "www.sample.com",
+    "build_version": "0",
+    "playbook_dir": "../ansible-local"
+  },
+  "builders": [
+    {
+      "type": "docker",
+      "image": "centos:latest",
+      "discard": true,
+      "changes": [
+        "WORKDIR /var/www",
+        "ENV HOSTNAME {{user `hostname`}}",
+        "ENV ssmdbendpoint {{user `ssmdbendpoint`}}",
+        "ENV ssmdbusername {{user `ssmdbusername`}}",
+        "ENV ssmdbpassword {{user `ssmdbpassword`}}",
+        "EXPOSE 80 443",
+        "LABEL version={{user `build_version`}}",
+        "ENTRYPOINT /run-httpd.sh"
+      ]
+    }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "yum -y --setopt=tsflags=nodocs update",
+        "yum -y --setopt=tsflags=nodocs install epel-release",
+        "yum -y --setopt=tsflags=nodocs install ansible zip unzip",
+        "yum clean all"
+      ]
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "{{user `playbook_dir`}}/sample-lamp.yaml",
+      "playbook_paths": "{{user `playbook_dir`}}"
+    }
+  ]
+}

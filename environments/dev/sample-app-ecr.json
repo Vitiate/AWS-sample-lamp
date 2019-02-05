@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "applications",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue": "dev",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "ComponentName",
+    "ParameterValue": "ecr",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "AppName",
+    "ParameterValue": "demo_docker_app",
+    "UsePreviousValue": false
+  }
+]

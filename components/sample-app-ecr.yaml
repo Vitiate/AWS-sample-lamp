@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+  This template deploys an ECR repository
+
+Parameters:
+  ProjectName:
+    Type: String
+    Description: A project to associate with resources in the template (e.g. 'InitiativeX')
+
+  EnvironmentName:
+    Type: String
+    Description: A description to identify environment (e.g. dev, prod)
+
+  ComponentName:
+    Type: String
+    Description: A description to identify component in the project; e.g. networking
+
+  AppName:
+    Type: String
+    Description: A description to identify app for this repository
+
+Resources:
+  ContainerRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub "${ProjectName}/${EnvironmentName}/${ComponentName}/${AppName}"
+      RepositoryPolicyText:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowPull
+            Effect: Allow
+            Principal:
+              AWS:
+                "Fn::Sub":
+                  "arn:aws:iam::${AWS::AccountId}:root"
+            Action:
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+              - ecr:BatchCheckLayerAvailability
+

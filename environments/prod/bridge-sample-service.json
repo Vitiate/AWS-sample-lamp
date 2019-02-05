@@ -1,0 +1,62 @@
+[
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "applications",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue": "prod",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "ComponentName",
+    "ParameterValue": "bridge-service",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupVpcId",
+    "ParameterValue": "/cloudformation/applications/prod/networking/vpc/id",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupClusterName",
+    "ParameterValue": "/cloudformation/applications/prod/ecs-cluster/cluster/name",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupLoadBalancerListenerArn",
+    "ParameterValue": "/cloudformation/applications/prod/load-balancer/http-listener/arn",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupApplicationAutoScalingRoleArn",
+    "ParameterValue": "/cloudformation/applications/prod/ecs-cluster/application-autoscaling-role/arn",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "TaskName",
+    "ParameterValue": "sample",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "Path",
+    "ParameterValue": "/bridge",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "HealthCheckPath",
+    "ParameterValue": "/bridge",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "DesiredCount",
+    "ParameterValue": "2",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "ContainerPort",
+    "ParameterValue": "5000",
+    "UsePreviousValue": false
+  }
+]

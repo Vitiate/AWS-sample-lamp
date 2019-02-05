@@ -1,0 +1,52 @@
+---
+- hosts: all
+  become_method: sudo
+  become_user: root
+  become: yes
+  tasks:
+
+  - name: Unpack AWS CLI package
+    become_user: root
+    become: yes
+    unarchive:
+      src: https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
+      remote_src: yes
+      dest: /tmp/
+
+  - name: Execute AWS CLI installer
+    become_user: root
+    become: yes
+    shell: /tmp/awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+    args:
+      creates: /usr/local/aws
+
+  - name: Create the .aws folder
+    become_user: root
+    become: yes
+    file:
+      path: /root/.aws
+      state: directory
+
+  - name: Create basic AWS config
+    become_user: root
+    become: yes
+    template:
+      src: ./playbooks/ansible-local/templates/aws.config.j2
+      dest: /root/.aws/config
+      owner: root
+      mode: 600
+
+  - name: Create basic AWS config
+    become_user: root
+    become: yes
+    template:
+      src: ./playbooks/ansible-local/templates/entrypoint.sh.j2
+      dest: /entrypoint.sh
+      owner: root
+      mode: 700
+
+  - name: install packages
+    yum:
+      name: httpd,mod_ssl,exim,php,php-gd,php-soap,php-xmlrpc,php-xml,php-mysql
+      state: latest
+
