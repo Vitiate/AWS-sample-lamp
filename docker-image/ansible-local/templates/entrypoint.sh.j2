@@ -5,8 +5,6 @@
 # if it thinks it is already running.
 rm -rf /run/httpd/* /tmp/httpd*
 
-echo "SSMDBENDPOINT: ${ssmdbendpoint}"
-echo "SSMDBUSERNAME: ${ssmdbusername}"
-echo "SSMDBPASSWORD: ${ssmdbpassword}"
+echo "SSMDBENDPOINT: ${ssmdbparam}"
 
 exec /usr/sbin/apachectl -DFOREGROUND

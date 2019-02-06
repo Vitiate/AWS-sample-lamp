@@ -43,11 +43,23 @@ stage_deploy_dev:
     - COMPONENT=sample-app-rds make update-stack
     - COMPONENT=sample-app-alb make update-stack
     - COMPONENT=sample-app-ecr make update-stack
-    # Store the ecr location in a file so we can pull it out in the next step
-    - aws ssm get-parameter --name "/cloudformation/applications/dev/ecr/sample-app" --output text --query Parameter.Value > ~/ecrRegistry
-    # Build the image, 
-    - ECRURL=$(cat ~/ecrRegistry) && ~/packer/packer build -var "docker-repo=$ECRURL" -var "playbook_dir=docker-image/ansible-local" -var "build_version=$CI_MERGE_REQUEST_ID" docker-image/packer/sample-lamp.json
   only: 
     - development
   tags:
     - awscliDocker
+
+stage_build_docker:
+  stage: stage_build_docker
+  before_script:
+    - export AWS_ACCESS_KEY_ID=$DEV_AccessKey
+    - export AWS_SECRET_ACCESS_KEY=$DEV_SecretKey
+    - export AWS_DEFAULT_REGION=us-east-1
+    - export PROJECT=applications
+    - export ENV=dev
+    - export PROFILE=dev
+  script:
+    # Store the ecr location in a file so we can pull it out in the next step
+    - aws ssm get-parameter --name "/cloudformation/applications/dev/ecr/sample-app" --output text --query Parameter.Value > ~/ecrRegistry
+    # Build the image, 
+    - ECRURL=$(cat ~/ecrRegistry) && ~/packer/packer build -var "docker-repo=$ECRURL" -var "playbook_dir=docker-image/ansible-local" -var "build_version=$CI_MERGE_REQUEST_ID" -var "ssmdbparam=/cloudformation/applications/dev/sample-app-rds/secret/name"docker-image/packer/sample-lamp.json
+  when: manual
