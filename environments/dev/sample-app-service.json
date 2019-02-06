@@ -26,7 +26,7 @@
   },
   {
     "ParameterKey": "SsmLookupLoadBalancerListenerArn",
-    "ParameterValue": "/cloudformation/applications/dev/load-balancer/http-listener/arn",
+    "ParameterValue": "/cloudformation/applications/dev/sample-app-alb/http-listener/arn",
     "UsePreviousValue": false
   },
   {
