@@ -56,7 +56,7 @@
   },
   {
     "ParameterKey": "HealthCheckPath",
-    "ParameterValue": "/",
+    "ParameterValue": "/images/poweredby.png",
     "UsePreviousValue": false
   },
   {
