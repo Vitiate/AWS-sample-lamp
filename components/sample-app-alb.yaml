@@ -36,7 +36,7 @@ Resources:
       Subnets: !Ref SsmLookupSubnetIds
       LoadBalancerAttributes:
       - Key: idle_timeout.timeout_seconds
-        Value: 60
+        Value: "60"
       SecurityGroups:
       - !Ref SsmLookupALBPublicSecurityGroup
       Tags:
