@@ -42,7 +42,7 @@ stage_deploy_dev:
 #    - COMPONENT=moodle34-security-groups make update-stack
 #    - COMPONENT=sample-app-security-groups make update-stack
 #    - COMPONENT=sample-app-rds make update-stack
-#    - COMPONENT=sample-app-alb make update-stack
+    - COMPONENT=sample-app-alb make update-stack
 #    - COMPONENT=sample-app-ecr make update-stack
     - COMPONENT=sample-app-service make update-stack
   only: 

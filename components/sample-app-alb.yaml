@@ -1,6 +1,7 @@
----
+AWSTemplateFormatVersion: "2010-09-09"
 
-AWSTemplateFormatVersion: 2010-09-09
+Description: >
+  This template deploys an Application Load Balancer that exposes our various ECS services.
 
 Parameters:
   ProjectName:
@@ -8,56 +9,78 @@ Parameters:
     Description: A project to associate with resources in the template (e.g. 'InitiativeX')
 
   EnvironmentName:
+    Description: An environment name that will be prefixed to resource names
     Type: String
-    Description: A description to identify environment (e.g. dev, prod)
 
   ComponentName:
     Type: String
     Description: A description to identify component in the project; e.g. networking
 
-  SsmLookupALBPublicSecurityGroup:
-    Description: Select the public ALB security group.
-    Type: AWS::SSM::Parameter::Value<AWS::EC2::SecurityGroup::Id>
-
-  SsmLookupSubnetIds:
-    Description: Select existing Data subnets. Subnets selected must be in separate AZs.
-    Type: AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>
-
   SsmLookupVpcId:
     Description: Choose which VPC this ECS cluster should be deployed to
     Type: AWS::SSM::Parameter::Value<AWS::EC2::VPC::Id>
 
-Resources:
+  SsmLookupSubnetIds:
+    Description: Choose which subnets this ECS cluster should be deployed to
+    Type: AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>
 
-  PublicApplicationLoadBalancer: 
+  SsmLookupLoadBalancerSecurityGroup:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::SecurityGroup::Id>
+
+
+Resources:
+  LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Scheme: internet-facing
+      Name:
+        "Fn::Sub":
+          "${ProjectName}-${EnvironmentName}-${ComponentName}"
       Subnets: !Ref SsmLookupSubnetIds
-      LoadBalancerAttributes:
-      - Key: idle_timeout.timeout_seconds
-        Value: "60"
       SecurityGroups:
-      - !Ref SsmLookupALBPublicSecurityGroup
+        - !Ref SsmLookupLoadBalancerSecurityGroup
       Tags:
         - Key: Name
           Value:
             "Fn::Sub":
               "${ProjectName}-${EnvironmentName}-${ComponentName}"
 
-  PublicAlbTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  LoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
-      HealthCheckIntervalSeconds: 30
-      HealthCheckPath: /AWS_ELB_HEALTH_CHECK 
-      HealthCheckTimeoutSeconds: 5
-      Name: !Ref ComponentName
+      LoadBalancerArn: !Ref LoadBalancer
       Port: 80
       Protocol: HTTP
-      UnhealthyThresholdCount: 5
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref DefaultTargetGroup
+
+  # Unused - necessary for a listener, but create one per service instead.
+  DefaultTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
       VpcId: !Ref SsmLookupVpcId
-      Tags:
-        - Key: Name
-          Value:
-            "Fn::Sub":
-              "${ProjectName}-${EnvironmentName}-${ComponentName}"
+      Port: 80
+      Protocol: HTTP
+
+
+  LoadBalancerHttpListenerParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name:
+        "Fn::Sub":
+          "/cloudformation/${ProjectName}/${EnvironmentName}/${ComponentName}/http-listener/arn"
+      Type: "String"
+      Value: { Ref: LoadBalancerListener }
+
+Outputs:
+  LoadBalancer:
+    Description: A reference to the Application Load Balancer
+    Value: !Ref LoadBalancer
+
+  LoadBalancerUrl:
+    Description: The URL of the ALB
+    Value: !GetAtt LoadBalancer.DNSName
+
+  Listener:
+    Description: A reference to a port 80 listener
+    Value: !Ref LoadBalancerListener
