@@ -2,6 +2,7 @@ stages:
   - validate_cfn
   - stage_deploy_dev
   - stage_install_packer
+  - stage_build_docker
 
 stage_validate_cfn:
   stage: validate_cfn
