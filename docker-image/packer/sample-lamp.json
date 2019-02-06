@@ -19,7 +19,7 @@
         "ENV ssmdbparam {{user `ssmdbparam`}}",
         "EXPOSE 80 443",
         "LABEL version={{user `build_version`}}",
-        "ENTRYPOINT /run-httpd.sh"
+        "ENTRYPOINT /entrypoint.sh"
       ]
     }],
   "provisioners": [
