@@ -2,6 +2,7 @@ stages:
   - validate_cfn
   - stage_deploy_dev
   - stage_install_packer
+
 stage_validate_cfn:
   stage: validate_cfn
   script:
@@ -20,6 +21,8 @@ stage_install_packer:
   script:
     #   Yeah this looks bad, but it is better then it would be otherwise. Install packer if not installed
     - if [ ! -d "$HOME/packer" ]; then mkdir ~/packer; pushd ~/packer; wget https://releases.hashicorp.com/packer/1.3.4/packer_1.3.4_linux_amd64.zip; unzip ./packer_1.3.4_linux_amd64.zip; popd; fi     
+  only:
+    - development
   tags:
     - awscliDocker
 
