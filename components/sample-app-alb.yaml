@@ -24,7 +24,7 @@ Parameters:
     Description: Choose which subnets this ECS cluster should be deployed to
     Type: AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>
 
-  SsmLookupLoadBalancerSecurityGroup:
+  SsmLookupALBPublicSecurityGroup:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::SecurityGroup::Id>
 
 
@@ -37,7 +37,7 @@ Resources:
           "${ProjectName}-${EnvironmentName}-${ComponentName}"
       Subnets: !Ref SsmLookupSubnetIds
       SecurityGroups:
-        - !Ref SsmLookupLoadBalancerSecurityGroup
+        - !Ref SsmLookupALBPublicSecurityGroup
       Tags:
         - Key: Name
           Value:
