@@ -31,12 +31,12 @@
   },
   {
     "ParameterKey": "SsmLookupSubnetIds",
-    "ParameterValue": "/cloudformation/applications/sandbox/networking/private-subnets/ids",
+    "ParameterValue": "/cloudformation/applications/dev/networking/private-subnets/ids",
     "UsePreviousValue": false
   },
   {
     "ParameterKey": "SsmLookupRDSInstanceSecurityGroup",
-    "ParameterValue": "/cloudformation/applications/sandbox/aumoodle-security-groups/rds-sg/id",
+    "ParameterValue": "/cloudformation/applications/dev/sample-app-security-groups/rds-sg/id",
     "UsePreviousValue": false
   }
 ]

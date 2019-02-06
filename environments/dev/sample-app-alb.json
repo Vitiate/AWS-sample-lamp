@@ -21,17 +21,17 @@
   },
   {
     "ParameterKey": "SsmLookupSubnetIds",
-    "ParameterValue": "/cloudformation/applications/sandbox/networking/private-subnets/ids",
+    "ParameterValue": "/cloudformation/applications/dev/networking/private-subnets/ids",
     "UsePreviousValue": false
   },
   {
     "ParameterKey": "SsmLookupALBPublicSecurityGroup",
-    "ParameterValue": "/cloudformation/applications/sandbox/aumoodle-security-groups/alb-sg/id",
+    "ParameterValue": "/cloudformation/applications/dev/sample-app-security-groups/alb-sg/id",
     "UsePreviousValue": false
   },
   {
     "ParameterKey": "SsmLookupVpcId",
-    "ParameterValue": "/cloudformation/applications/sandbox/networking/vpc/id",
+    "ParameterValue": "/cloudformation/applications/dev/networking/vpc/id",
     "UsePreviousValue": false
   }
 ]
