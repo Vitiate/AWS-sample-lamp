@@ -44,6 +44,6 @@ Resources:
     Properties:
       Name:
         "Fn::Sub":
-          "/cloudformation/${ProjectName}/${EnvironmentName}/${ComponentName}/ECR/${AppName}"
+          "/cloudformation/${ProjectName}/${EnvironmentName}/${ComponentName}/${AppName}"
       Type: "String"
-      Value: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ProjectName}/${EnvironmentName}/${AppName}"
+      Value: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ProjectName}/${EnvironmentName}/${ComponentName}/${AppName}"
