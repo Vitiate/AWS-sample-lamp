@@ -1,7 +1,7 @@
 # docker-image Packer Build
 
 ## Building a docker image
-These folders contain everything needed to create a AMI image using packer and ansible for local configuration.
+These folders contain everything needed to create a docker image using packer and ansible for local configuration.
 
 
 ```bash
@@ -19,6 +19,13 @@ These folders contain everything needed to create a AMI image using packer and a
 ## Local packer Development
 
 You must have packer installed locally, please see https://www.packer.io/intro/getting-started/install.html
+
+```bash
+# Store the ecr location in a file so we can pull it out in the next step
+aws ssm get-parameter --name "/cloudformation/applications/dev/ecr/sample-app" --output text --query Parameter.Value > ~/ecrRegistry
+# Build the image, 
+ECRURL=$(cat ~/ecrRegistry) && ~/packer/packer build -var "docker-repo=$ECRURL" -var "playbook_dir=docker-image/ansible-local" -var "build_version=$CI_MERGE_REQUEST_ID" -var "ssmdbparam=/cloudformation/applications/dev/sample-app-rds/secret/name" docker-image/packer/sample-lamp.json
+```
 
 ## Debugging
 
