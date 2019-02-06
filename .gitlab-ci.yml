@@ -40,10 +40,11 @@ stage_deploy_dev:
     - export PROFILE=dev
   script:
 #    - COMPONENT=moodle34-security-groups make update-stack
-    - COMPONENT=sample-app-security-groups make update-stack
-    - COMPONENT=sample-app-rds make update-stack
-    - COMPONENT=sample-app-alb make update-stack
-    - COMPONENT=sample-app-ecr make update-stack
+#    - COMPONENT=sample-app-security-groups make update-stack
+#    - COMPONENT=sample-app-rds make update-stack
+#    - COMPONENT=sample-app-alb make update-stack
+#    - COMPONENT=sample-app-ecr make update-stack
+    - COMPONENT=sample-app-service make update-stack
   only: 
     - development
   tags:
@@ -64,3 +65,5 @@ stage_build_docker:
     # Build the image, 
     - ECRURL=$(cat ~/ecrRegistry) && ~/packer/packer build -var "docker-repo=$ECRURL" -var "playbook_dir=docker-image/ansible-local" -var "build_version=$CI_MERGE_REQUEST_ID" -var "ssmdbparam=/cloudformation/applications/dev/sample-app-rds/secret/name"docker-image/packer/sample-lamp.json
   when: manual
+  tags:
+    - awscliDocker
