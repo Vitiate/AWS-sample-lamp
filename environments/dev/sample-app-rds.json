@@ -15,11 +15,6 @@
     "UsePreviousValue": false
   },
   {
-    "ParameterKey": "AppName",
-    "ParameterValue": "sample-app",
-    "UsePreviousValue": false
-  },
-  {
     "ParameterKey": "InstanceType",
     "ParameterValue": "db.t2.medium",
     "UsePreviousValue": false
