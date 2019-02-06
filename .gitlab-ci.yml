@@ -1,7 +1,6 @@
 stages:
   - validate_cfn
   - stage_deploy_dev
-  - stage_deploy_prod
 
 stage_validate_cfn:
   stage: validate_cfn
@@ -35,22 +34,5 @@ stage_deploy_dev:
     - ~/packer/packer build -var 'docker-repo=${ECRURL}' -var 'playbook_dir=docker-image/ansible-local' -var 'build_version=${CI_MERGE_REQUEST_ID}' docker-image/packer/sample-lamp.json
   only: 
     - development
-  tags:
-    - awscliDocker
-
-stage_deploy_prod:
-  stage: stage_deploy_prod
-  before_script:
-    - export AWS_ACCESS_KEY_ID=$DEV_AccessKey
-    - export AWS_SECRET_ACCESS_KEY=$DEV_SecretKey
-    - export AWS_DEFAULT_REGION=us-east-1
-    - export PROJECT=applications
-    - export ENV=prod
-    - export PROFILE=prod
-  script:
-#    - COMPONENT=moodle34-security-groups make update-stack
-#    - COMPONENT=moodle34-rds make update-stack
-  only:
-    - master
   tags:
     - awscliDocker
