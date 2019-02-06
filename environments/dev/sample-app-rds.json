@@ -1,0 +1,42 @@
+[
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "applications",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue": "dev",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "ComponentName",
+    "ParameterValue": "sample-app-rds",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "AppName",
+    "ParameterValue": "sample-app",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "InstanceType",
+    "ParameterValue": "db.t2.medium",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "DBSize",
+    "ParameterValue": "20",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupSubnetIds",
+    "ParameterValue": "/cloudformation/applications/sandbox/networking/private-subnets/ids",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupRDSInstanceSecurityGroup",
+    "ParameterValue": "/cloudformation/applications/sandbox/aumoodle-security-groups/rds-sg/id",
+    "UsePreviousValue": false
+  }
+]

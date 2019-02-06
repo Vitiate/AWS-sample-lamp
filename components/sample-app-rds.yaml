@@ -1,0 +1,122 @@
+---
+
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  ProjectName:
+    Type: String
+    Description: A project to associate with resources in the template (e.g. 'InitiativeX')
+
+  EnvironmentName:
+    Type: String
+    Description: A description to identify environment (e.g. dev, prod)
+
+  ComponentName:
+    Type: String
+    Description: A description to identify component in the project; e.g. networking
+
+  InstanceType:
+    Description: Which instance type should we use to build the Aurora Cluster?
+    Type: String
+
+  DBSize:
+    Description: Which instance type should we use to build the Aurora Cluster?
+    Type: String
+
+  SsmLookupRDSInstanceSecurityGroup:
+    Description: Select the database security group.
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::SecurityGroup::Id>
+
+  SsmLookupSubnetIds:
+    Description: Select existing Data subnets. Subnets selected must be in separate AZs.
+    Type: AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>
+
+Resources:
+
+  RDSSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: 
+        "Fn::Sub":
+          "${ProjectName}-${EnvironmentName}-${ComponentName}"
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "moodleadmin"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 16
+        ExcludeCharacters: '"@/\'
+
+  DatabaseInstance0:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Delete
+    Properties:
+      AllocatedStorage: !Ref DBSize
+      AllowMajorVersionUpgrade: false
+      AutoMinorVersionUpgrade: false
+      DBInstanceClass: !Ref InstanceType
+      DBSubnetGroupName: !Ref DataSubnetGroup
+      VPCSecurityGroups: 
+        - !Ref SsmLookupRDSInstanceSecurityGroup
+      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSSecret, ':SecretString:username}}' ]]
+      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSSecret, ':SecretString:password}}' ]]
+      Engine: postgres
+      Tags:
+        - Key: Name
+          Value:
+            "Fn::Sub":
+              "${ProjectName}-${EnvironmentName}-${ComponentName}"
+
+  DataSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: RDS Database Subnet Group for Moodle
+      SubnetIds: !Ref SsmLookupSubnetIds
+      Tags:
+        - Key: Name
+          Value:
+            "Fn::Sub":
+              "${ProjectName}-${EnvironmentName}-${ComponentName}"
+
+  SecretRDSInstanceAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref RDSSecret
+      TargetId: !Ref DatabaseInstance0
+      TargetType: AWS::RDS::DBInstance
+
+  # In the future we should implement rolling of passwords here.
+
+  DBSecretParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name:
+        "Fn::Sub":
+          "/cloudformation/${ProjectName}/${EnvironmentName}/${ComponentName}/secret/name"
+      Type: "String"
+      Value: { Ref: RDSSecret }
+
+  DBInstanceParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name:
+        "Fn::Sub":
+          "/cloudformation/${ProjectName}/${EnvironmentName}/${ComponentName}/rds-id/id"
+      Type: "String"
+      Value: { Ref: DatabaseInstance0 }
+
+  DBEndpointParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name:
+        "Fn::Sub":
+          "/cloudformation/${ProjectName}/${EnvironmentName}/${ComponentName}/rds-endpoint"
+      Type: "String"
+      Value: {"Fn::GetAtt": ["DatabaseInstance0","Endpoint.Address"]}
+
+  DBPortParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name:
+        "Fn::Sub":
+          "/cloudformation/${ProjectName}/${EnvironmentName}/${ComponentName}/rds-port"
+      Type: "String"
+      Value: {"Fn::GetAtt": ["DatabaseInstance0","Endpoint.Port"]}

@@ -11,7 +11,7 @@
   },
   {
     "ParameterKey": "ComponentName",
-    "ParameterValue": "awsvpc-sample-service",
+    "ParameterValue": "sample-app",
     "UsePreviousValue": false
   },
   {
@@ -51,12 +51,12 @@
   },
   {
     "ParameterKey": "Path",
-    "ParameterValue": "/awsvpc",
+    "ParameterValue": "/",
     "UsePreviousValue": false
   },
   {
     "ParameterKey": "HealthCheckPath",
-    "ParameterValue": "/awsvpc",
+    "ParameterValue": "/",
     "UsePreviousValue": false
   },
   {
@@ -66,7 +66,7 @@
   },
   {
     "ParameterKey": "ContainerPort",
-    "ParameterValue": "5000",
+    "ParameterValue": "80",
     "UsePreviousValue": false
   }
 ]

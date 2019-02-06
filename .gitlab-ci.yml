@@ -39,6 +39,9 @@ stage_deploy_dev:
     - export PROFILE=dev
   script:
 #    - COMPONENT=moodle34-security-groups make update-stack
+    - COMPONENT=sample-app-security-groups make update-stack
+    - COMPONENT=sample-app-rds make update-stack
+    - COMPONENT=sample-app-alb make update-stack
     - COMPONENT=sample-app-ecr make update-stack
     # Store the ecr location in a file so we can pull it out in the next step
     - aws ssm get-parameter --name "/cloudformation/applications/dev/ecr/sample-app" --output text --query Parameter.Value > ~/ecrRegistry

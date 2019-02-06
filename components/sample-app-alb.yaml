@@ -1,0 +1,63 @@
+---
+
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  ProjectName:
+    Type: String
+    Description: A project to associate with resources in the template (e.g. 'InitiativeX')
+
+  EnvironmentName:
+    Type: String
+    Description: A description to identify environment (e.g. dev, prod)
+
+  ComponentName:
+    Type: String
+    Description: A description to identify component in the project; e.g. networking
+
+  SsmLookupALBPublicSecurityGroup:
+    Description: Select the public ALB security group.
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::SecurityGroup::Id>
+
+  SsmLookupSubnetIds:
+    Description: Select existing Data subnets. Subnets selected must be in separate AZs.
+    Type: AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>
+
+  SsmLookupVpcId:
+    Description: Choose which VPC this ECS cluster should be deployed to
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::VPC::Id>
+
+Resources:
+
+  PublicApplicationLoadBalancer: 
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      Subnets: !Ref SsmLookupSubnetIds
+      LoadBalancerAttributes:
+      - Key: idle_timeout.timeout_seconds
+        Value: "60"
+      SecurityGroups:
+      - !Ref SsmLookupALBPublicSecurityGroup
+      Tags:
+        - Key: Name
+          Value:
+            "Fn::Sub":
+              "${ProjectName}-${EnvironmentName}-${ComponentName}"
+
+  PublicAlbTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: /AWS_ELB_HEALTH_CHECK 
+      HealthCheckTimeoutSeconds: 5
+      Name: !Ref ComponentName
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 5
+      VpcId: !Ref SsmLookupVpcId
+      Tags:
+        - Key: Name
+          Value:
+            "Fn::Sub":
+              "${ProjectName}-${EnvironmentName}-${ComponentName}"
