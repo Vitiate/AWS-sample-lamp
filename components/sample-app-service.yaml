@@ -1,5 +1,5 @@
 Description: >
-  This is an example of a long running ECS service that serves a JSON API of products.
+  This template deploys an a sample-app-service
 
 Parameters:
   ProjectName:
@@ -30,6 +30,9 @@ Parameters:
     Description: The Application Autoscaling role to use
     Type: AWS::SSM::Parameter::Value<String>
 
+  SsmLookupAwsvpcSampleServiceSecurityGroup:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::SecurityGroup::Id>
+
   TaskName:
     Description: Name for the task/service
     Type: String
@@ -50,6 +53,10 @@ Parameters:
     Description: Port that the container listens on
     Type: Number
 
+  SsmLookupSubnetIds:
+    Description: Choose which subnets this service should be deployed to
+    Type: AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>
+
 
 Resources:
   Service:
@@ -61,6 +68,12 @@ Resources:
       DesiredCount: !Ref DesiredCount
       TaskDefinition: !Ref TaskDefinition
       SchedulingStrategy: REPLICA
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          Subnets: !Ref SsmLookupSubnetIds
+          SecurityGroups:
+            - !Ref SsmLookupAwsvpcSampleServiceSecurityGroup
       LoadBalancers:
         - ContainerName: !Ref TaskName
           ContainerPort: !Ref ContainerPort
@@ -71,11 +84,11 @@ Resources:
     Properties:
       Family: !Sub ${TaskName}-service
       TaskRoleArn: !GetAtt [TaskRole, Arn]
-      NetworkMode: bridge
+      NetworkMode: awsvpc
       ContainerDefinitions:
         - Name: !Ref TaskName
           Essential: true
-          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ProjectName}/${EnvironmentName}/ecr/${TaskName}:latest"
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ProjectName}/${EnvironmentName}/ecr/${ComponentName}:latest"
           Memory: 128
           PortMappings:
             - ContainerPort: !Ref ContainerPort
@@ -97,8 +110,6 @@ Resources:
               - ecs-tasks.amazonaws.com
           Action:
             - sts:AssumeRole
-      # ManagedPolicyArns:
-      #   - "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
 
   CloudWatchLogsGroup:
     Type: AWS::Logs::LogGroup
@@ -119,7 +130,7 @@ Resources:
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
-      TargetType: instance
+      TargetType: ip
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds
           Value: "30"
@@ -128,7 +139,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
     Properties:
       ListenerArn: !Ref SsmLookupLoadBalancerListenerArn
-      Priority: 2
+      Priority: 1
       Conditions:
         - Field: path-pattern
           Values:

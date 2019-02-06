@@ -1,0 +1,111 @@
+---
+
+AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  ProjectName:
+    Type: String
+    Description: A project to associate with resources in the template (e.g. 'InitiativeX')
+
+  EnvironmentName:
+    Type: String
+    Description: A description to identify environment (e.g. dev, prod)
+
+  ComponentName:
+    Type: String
+    Description: A description to identify component in the project; e.g. networking
+
+  PublicCIDRAllowed:
+    Type: String
+    Description: The allow CIDR for public facing security groups
+
+  SsmLookupVpcId:
+    Description: Choose which VPC this ECS cluster should be deployed to
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::VPC::Id>
+
+Resources:
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref SsmLookupVpcId
+      GroupName:
+        "Fn::Sub":
+            "${ProjectName}-${EnvironmentName}-${ComponentName}-rds-instance-sg"
+      GroupDescription: Access to the RDS/Aurora Instances from applications
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value:
+            "Fn::Sub":
+              "${ProjectName}-${EnvironmentName}-${ComponentName}-rds-instance-sg"
+
+  RDSSecurityGroupParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name:
+        "Fn::Sub":
+          "/cloudformation/${ProjectName}/${EnvironmentName}/${ComponentName}/rds-sg/id"
+      Type: "String"
+      Value: { Ref: RDSSecurityGroup }
+
+  ElastiCacheSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref SsmLookupVpcId
+      GroupName:
+        "Fn::Sub":
+            "${ProjectName}-${EnvironmentName}-${ComponentName}-ec-instance-sg"
+      GroupDescription: Access to the elasticache Instances from applications
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 11211
+          ToPort: 11211
+      Tags:
+        - Key: Name
+          Value:
+            "Fn::Sub":
+              "${ProjectName}-${EnvironmentName}-${ComponentName}-ec-instance-sg"
+
+  ElastiCacheSecurityGroupParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name:
+        "Fn::Sub":
+          "/cloudformation/${ProjectName}/${EnvironmentName}/${ComponentName}/ec-sg/id"
+      Type: "String"
+      Value: { Ref: ElastiCacheSecurityGroup }
+
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref SsmLookupVpcId
+      GroupName:
+        "Fn::Sub":
+            "${ProjectName}-${EnvironmentName}-${ComponentName}-alb-sg"
+      GroupDescription: Access to the public facing ALB 80 & 443
+      SecurityGroupIngress:
+        - CidrIp: !Ref PublicCIDRAllowed
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+        - CidrIp: !Ref PublicCIDRAllowed
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+      Tags:
+        - Key: Name
+          Value:
+            "Fn::Sub":
+              "${ProjectName}-${EnvironmentName}-${ComponentName}-alb-sg"
+
+  ALBSecurityGroupParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name:
+        "Fn::Sub":
+          "/cloudformation/${ProjectName}/${EnvironmentName}/${ComponentName}/alb-sg/id"
+      Type: "String"
+      Value: { Ref: ALBSecurityGroup }

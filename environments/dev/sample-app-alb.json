@@ -1,0 +1,37 @@
+[
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "applications",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue": "dev",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "ComponentName",
+    "ParameterValue": "sample-app-alb",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "AppName",
+    "ParameterValue": "sample-app",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupSubnetIds",
+    "ParameterValue": "/cloudformation/applications/sandbox/networking/private-subnets/ids",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupALBPublicSecurityGroup",
+    "ParameterValue": "/cloudformation/applications/sandbox/aumoodle-security-groups/alb-sg/id",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupVpcId",
+    "ParameterValue": "/cloudformation/applications/sandbox/networking/vpc/id",
+    "UsePreviousValue": false
+  }
+]
