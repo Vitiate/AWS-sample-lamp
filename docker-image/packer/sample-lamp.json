@@ -14,7 +14,6 @@
     {
       "type": "docker",
       "image": "centos:latest",
-      "discard": true,
       "changes": [
         "WORKDIR /var/www",
         "ENV HOSTNAME {{user `hostname`}}",
