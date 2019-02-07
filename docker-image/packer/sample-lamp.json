@@ -1,9 +1,8 @@
 {
   "variables": {
-    "ssmdbparam": "ssm Location of dbendpoint",
+    "ssmdbparam": "ssm Location of base dbparameter ie: /cloudformation/applications/dev/sample-app-rds",
     "docker-repo": "",
     "ecr-login": "true",
-
     "hostname": "www.sample.com",
     "build_version": "0",
     "playbook_dir": "../ansible-local"
