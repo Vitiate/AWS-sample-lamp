@@ -6,5 +6,8 @@
 rm -rf /run/httpd/* /tmp/httpd*
 
 echo "SSMDBENDPOINT: ${ssmdbparam}"
-
+aws ssm get-parameter --name "/cloudformation/applications/dev/sample-app-rds/rds-endpoint" --output text --query Parameter.Value
+aws ssm get-parameter --name "/cloudformation/applications/dev/sample-app-rds/rds-port" --output text --query Parameter.Value
+secret=$(aws --profile dev ssm get-parameter --name "/cloudformation/applications/dev/sample-app-rds/secret/name" --output text --query Parameter.Value)
+aws secretsmanager get-secret-value --secret-id $secret --output json
 exec /usr/sbin/apachectl -DFOREGROUND
