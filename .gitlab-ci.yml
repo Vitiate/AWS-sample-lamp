@@ -2,6 +2,7 @@ stages:
   - validate_cfn
   - stage_deploy_dev
   - stage_build_docker
+  - update_service_ecs
 
 stage_validate_cfn:
   stage: validate_cfn
@@ -26,11 +27,10 @@ stage_deploy_dev:
     - export ENV=dev
     - export PROFILE=dev
   script:
-#    - COMPONENT=moodle34-security-groups make update-stack
-#    - COMPONENT=sample-app-security-groups make update-stack
-#    - COMPONENT=sample-app-rds make update-stack
+    - COMPONENT=sample-app-security-groups make update-stack
+    - COMPONENT=sample-app-rds make update-stack
     - COMPONENT=sample-app-alb make update-stack
-#    - COMPONENT=sample-app-ecr make update-stack
+    - COMPONENT=sample-app-ecr make update-stack
     - COMPONENT=sample-app-service make update-stack
   only: 
     - development
@@ -48,7 +48,27 @@ stage_build_docker:
     - export PROFILE=dev
   script:
     - chmod 700 ./make_scripts/make_image.sh
-    - ./make_scripts/make_image.sh
+    - ./make_scripts/make_image.sh sample-app
+  only:
+    - development
+  when: manual
+  tags:
+    - awscliDocker
+
+update_service_ecs:
+  stage: update_service_ecs
+  before_script:
+    - export AWS_ACCESS_KEY_ID=$DEV_AccessKey
+    - export AWS_SECRET_ACCESS_KEY=$DEV_SecretKey
+    - export AWS_DEFAULT_REGION=us-east-1
+    - export PROJECT=applications
+    - export ENV=dev
+    - export PROFILE=dev
+  script:
+    - chmod 700 ./make_scripts/update_service.sh
+    - ./make_scripts/update_service.sh sample-app
+  only:
+    - development
   when: manual
   tags:
     - awscliDocker
