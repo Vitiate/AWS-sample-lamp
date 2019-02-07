@@ -16,6 +16,9 @@ These folders contain everything needed to create a docker image using packer an
 
 ```
 
+## Remember you need to edit the /make_scripts/make_image.sh to work with your config
+
+
 ## Local packer Development
 
 You must have packer installed locally, please see https://www.packer.io/intro/getting-started/install.html

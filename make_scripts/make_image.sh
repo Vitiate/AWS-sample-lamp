@@ -7,6 +7,6 @@ if [ ! -d "$HOME/packer" ]; then
 fi
 
 # Store the ecr location so we can pull it out in the next step
-ECRURL=$(aws ssm get-parameter --name "/cloudformation/applications/dev/ecr/sample-app" --output text --query Parameter.Value)
+ECRURL=$(aws ssm get-parameter --name "/cloudformation/applications/$ENV/ecr/$1" --output text --query Parameter.Value)
 # Build the image
-~/packer/packer build -var "docker-repo=$ECRURL" -var "playbook_dir=docker-image/ansible-local" -var "build_version=$CI_COMMIT_SHORT_SHA" -var "ssmdbparam=/cloudformation/applications/dev/sample-app-rds" docker-image/packer/sample-lamp.json
+~/packer/packer build -var "docker-repo=$ECRURL" -var "playbook_dir=docker-image/ansible-local" -var "build_version=$CI_COMMIT_SHORT_SHA" -var "ssmdbparam=/cloudformation/applications/$ENV/$1-rds" docker-image/packer/$1.json
