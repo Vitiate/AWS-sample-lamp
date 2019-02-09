@@ -36,12 +36,17 @@
   },
   {
     "ParameterKey": "SsmLookupSubnetIds",
-    "ParameterValue": "/cloudformation/applications/dev/networking/public-subnets/ids",
+    "ParameterValue": "/cloudformation/applications/dev/networking/private-subnets/ids",
     "UsePreviousValue": false
   },
   {
     "ParameterKey": "SsmLookupAwsvpcSampleServiceSecurityGroup",
     "ParameterValue": "/cloudformation/applications/dev/security-groups/awsvpc-sample-sg/id",
+    "UsePreviousValue": false
+  },
+  {
+    "ParameterKey": "SsmLookupSecretARN",
+    "ParameterValue": "/cloudformation/applications/dev/sample-app-rds/secret/name",
     "UsePreviousValue": false
   },
   {

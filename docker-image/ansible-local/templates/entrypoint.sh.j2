@@ -6,8 +6,8 @@
 rm -rf /run/httpd/* /tmp/httpd*
 
 echo "SSMDBENDPOINT: ${ssmdbparam}"
-aws ssm get-parameter --name "/cloudformation/applications/dev/sample-app-rds/rds-endpoint" --output text --query Parameter.Value
-aws ssm get-parameter --name "/cloudformation/applications/dev/sample-app-rds/rds-port" --output text --query Parameter.Value
-secret=$(aws --profile dev ssm get-parameter --name "/cloudformation/applications/dev/sample-app-rds/secret/name" --output text --query Parameter.Value)
-aws secretsmanager get-secret-value --secret-id $secret --output json
+secret=$(aws  ssm get-parameter --name "${ssmdbparam}/secret/name" --output text --query Parameter.Value)
+# This gets us all the variables from the secret
+vars=$(aws secretsmanager get-secret-value --secret-id $secret --output text --query SecretString | jq -r 'to_entries[] | "export \(.key)='\''\(.value)'\''"')
+eval $vars
 exec /usr/sbin/apachectl -DFOREGROUND
