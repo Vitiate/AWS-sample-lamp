@@ -57,6 +57,10 @@ Parameters:
     Description: Choose which subnets this service should be deployed to
     Type: AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>
 
+  SsmLookupSecretARN:
+    Description: The Secret the instance has access to
+    Type: AWS::SSM::Parameter::Value<String>
+
 
 Resources:
   Service:
@@ -84,6 +88,7 @@ Resources:
     Properties:
       Family: !Sub ${TaskName}-service
       TaskRoleArn: !GetAtt [TaskRole, Arn]
+      ExecutionRoleArn: !GetAtt [TaskRole, Arn]
       NetworkMode: awsvpc
       ContainerDefinitions:
         - Name: !Ref TaskName
@@ -101,15 +106,63 @@ Resources:
   TaskRole:
     Type: AWS::IAM::Role
     Properties:
-      Path: /
       AssumeRolePolicyDocument:
+        Version: 2012-10-17
         Statement:
-          Effect: Allow
+        - Effect: Allow
           Principal:
             Service:
-              - ecs-tasks.amazonaws.com
+            - ecs-tasks.amazonaws.com
           Action:
-            - sts:AssumeRole
+          - sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: ssm-sample-app
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+            - ssm:GetParameters
+            - ssm:GetParameter
+            Resource:
+            - !Ref SsmLookupSecretARN
+      - PolicyName: secrets-sample-app
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+            - secretsmanager:GetSecretValue
+            Resource:
+            - !Ref SsmLookupSecretARN
+      - PolicyName: ecr-sample-app
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+            - ecr:GetAuthorizationToken
+            - ecr:BatchCheckLayerAvailability
+            - ecr:GetDownloadUrlForLayer
+            - ecr:GetRepositoryPolicy
+            - ecr:DescribeRepositories
+            - ecr:ListImages
+            - ecr:DescribeImages
+            - ecr:BatchGetImage
+            Resource:
+            - "*"
+      - PolicyName: logs-sample-app
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            - logs:CreateLogGroup
+            Resource:
+            - !Sub "arn:aws:logs:us-east-1:*:log-group:*"
 
   CloudWatchLogsGroup:
     Type: AWS::Logs::LogGroup
