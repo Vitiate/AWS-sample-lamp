@@ -84,6 +84,11 @@ COMPONENT=moodle34-base make update-stack
 
 This will result in a CloudFormation stack named `applications-moodle34-base-dev`.
 
+## make_scripts
+This folder contains 3 different scripts that when executed perform different options.
+The ```make_image.sh``` will build a new docker image and push it to the AWS ECR associated with this application.
+The ```update_service.sh``` will force the AWS ECS cluster to deploy a new docker image.
+The ```update_stack.sh``` is used for general cloudformation deployment operations.
 
 ## Parameter Store
 
